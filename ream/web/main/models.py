@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse_lazy
 
 
 class Contacts(models.Model):
@@ -8,6 +9,9 @@ class Contacts(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse_lazy('news_detail', kwargs={'slug': self.slug})
 
 
 class News(models.Model):
@@ -23,3 +27,6 @@ class News(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse_lazy('news_detail', kwargs={'slug': self.slug})
