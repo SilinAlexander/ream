@@ -103,16 +103,16 @@
         </div>
 
         <div class="row">
-          {% for news in news %}
+          {% for article in news %}
 
           <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100">
-              <a href="{{ news.get_absolute_url }}"><img class="card-img-top" src="{{ news.image.url }}" alt=""></a>
               <div class="card-body">
                 <h4 class="card-title">
-                  <a href="{{ news.get_absolute_url }}">{{ news.title }}</a>
+                  <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
                 </h4>
-                <h5>{{ news.description }}</h5>
+                <img class="card-img-top" src="{{ article.image.url }}" alt="">
+                <h5>{{ article.description | truncatewords:6 }}</h5>
               </div>
             </div>
           </div>

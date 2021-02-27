@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.views.generic.base import View
 
 from .models import *
@@ -13,3 +13,8 @@ class BaseView(View):
             'news': news,
         }
         return render(request, 'base.html', context)
+
+
+class NewsDetail(DetailView):
+
+    model = News
