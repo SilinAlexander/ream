@@ -32,6 +32,7 @@ ADMIN_URL = os.environ.get('ADMIN_URL', 'admin')
 SITE_ID = 1
 INSTALLED_APPS = [
     'main.apps.MainConfig',
+    'news.apps.NewsConfig',
 
 
     'django.contrib.admin',

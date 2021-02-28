@@ -9,8 +9,10 @@ class BaseView(View):
 
     def get(self, request, *args, **kwargs):
         news = LatestNews.objects.get_news_for_main_page('news')
+        contacts = Contacts.objects.all()
         context = {
             'news': news,
+            'contacts': contacts,
         }
         return render(request, 'base.html', context)
 
@@ -18,3 +20,5 @@ class BaseView(View):
 class NewsDetail(DetailView):
 
     model = News
+    slug_url_kwarg = 'slug'
+    template_name = 'main/news_detail.html'

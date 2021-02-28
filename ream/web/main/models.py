@@ -2,6 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse_lazy
 from django.contrib.auth.models import AbstractUser
+from django.utils.text import slugify
 
 from .managers import UserManager
 
@@ -27,7 +28,8 @@ class User(AbstractUser):
 class Contacts(models.Model):
 
     title = models.CharField(max_length=255, verbose_name='Контакт')
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, allow_unicode=True)
+    objects = models.Manager()
 
     def __str__(self):
         return self.title
@@ -35,14 +37,19 @@ class Contacts(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('news_detail', kwargs={'slug': self.slug})
 
+    def save(self, **kwargs):
+        self.slug = slugify(self.title, allow_unicode=True)
+        super().save(**kwargs)
+
 
 class News(models.Model):
 
     title = models.CharField(max_length=255, verbose_name='Заголовок')
     image = models.ImageField(verbose_name='Изображение')
     description = models.TextField(verbose_name='Описание', null=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, allow_unicode=True)
     objects = models.Manager()
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='news_set', null=True)
 
     class Meta:
         verbose_name_plural = 'Новости'
@@ -53,7 +60,9 @@ class News(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('news_detail', kwargs={'slug': self.slug})
 
-
+    def save(self, **kwargs):
+        self.slug = slugify(self.title, allow_unicode=True)
+        super().save(**kwargs)
 
 
 class LatestNewsManager:
@@ -74,6 +83,7 @@ class LatestNewsManager:
                         news, key=lambda x: x.__class__._meta.model_name.startswith(with_respect_to), reverse=True
                     )
         return news
+
 
 class LatestNews:
 

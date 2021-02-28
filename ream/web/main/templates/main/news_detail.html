@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load specifications %}
 {% block content %}
 <nav aria-label="breadcrumb" class="mt-3">
   <ol class="breadcrumb">
@@ -9,11 +8,16 @@
 </nav>
 <div class="row">
     <div class="col-md-4">
+
         <img src="{{ news.image.url }}" class="img-fluid">
     </div>
     <div class="col-md-8">
         <h3>{{ news.title }}</h3>
-         <p>{{ news.description }}</p>
+        {% if news.author %}
+        <h3>Author: {{ news.author.first_name }}</h3>
+        {% endif %}
+         <p>{{ news.description | safe }}</p>
+
         <hr>
 
     </div>
