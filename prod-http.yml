@@ -1,0 +1,80 @@
+version: '3.7'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/prod/nginx/Dockerfile
+    volumes:
+      - static_volume:/home/ubuntu/web/static
+      - media_volume:/home/ubuntu/web/media
+      - ./logs/nginx:/var/log/nginx
+    ports:
+      - 9000:80
+    depends_on:
+      - web
+    restart: always
+    networks:
+      - separated_network
+  web:
+    build:
+      context: .
+      dockerfile: docker/prod/web/Dockerfile
+    entrypoint: /entrypoint.sh
+    volumes:
+      - ./web/:/home/ubuntu/web
+      - static_volume:/home/ubuntu/web/static
+      - media_volume:/home/ubuntu/web/media
+    expose:
+      - 8000
+    environment:
+      - USE_HTTPS=0
+    env_file:
+      - docker/prod/env/.env
+      - docker/prod/env/.db.env
+      - docker/prod/env/.data.env
+    depends_on:
+      - db
+      - redis
+    restart: always
+    networks:
+      - separated_network
+  celery:
+    build:
+      context: .
+      dockerfile: docker/prod/web/Dockerfile
+    command: celery -A src worker -l info -Q celery
+    volumes:
+      - ./web/:/home/ubuntu/web/
+    env_file:
+      - docker/dev/env/.env
+      - docker/dev/env/.db.env
+      - docker/prod/env/.data.env
+    depends_on:
+      - redis
+    restart: always
+    networks:
+      - separated_network
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - docker/prod/env/.db.env
+    restart: always
+    networks:
+      - separated_network
+  redis:
+    image: redis:6.0.1-alpine
+    restart: always
+    networks:
+      - separated_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  separated_network:
+    driver: bridge
