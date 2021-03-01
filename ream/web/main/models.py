@@ -31,6 +31,9 @@ class Contacts(models.Model):
     slug = models.SlugField(unique=True, allow_unicode=True)
     objects = models.Manager()
 
+    class Meta:
+        verbose_name_plural = 'Контакты'
+
     def __str__(self):
         return self.title
 
