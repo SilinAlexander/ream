@@ -1,1 +1,2 @@
-# WILL BE SOON
+# Проект новостного сайта
+https://ream.jollymanager.com/
